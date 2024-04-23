@@ -49,7 +49,7 @@ function unflipCards() {
     secondCard.classList.remove("flip");
 
     lockBoard = false;
-  }, 1500);
+  }, 800);
 }
 
 function resetBoard() {
