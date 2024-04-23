@@ -1,25 +1,74 @@
-const card1 = document.getElementById("default-card-one");
-// card1.removeAttribute("src");
-// card1.attr("src", yg.img); // card div
-const card2 = document.getElementById("default-card-two"); // card div
-const card3 = document.getElementById("default-card-three"); // card div
-const card4 = document.getElementById("default-card-four"); // card div
-const card5 = document.getElementById("default-card-five"); // card div
-const card6 = document.getElementById("default-card-six"); // card div
-const card7 = document.getElementById("default-card-seven"); // card div
-const card8 = document.getElementById("default-card-eight"); // card div
+const cards = document.querySelectorAll(".card");
+const btn = document.getElementsByClassName("restart-btn");
 
-const cards = [card1, card2, card3, card4, card5, card6, card7, card8];
+console.log(btn);
 
-cards.forEach((card) =>
-  card.addEventListener("click", () => {
-    //   console.log("test");
-    card.classList.add("remove-card");
-    setTimeout(() => card.classList.remove("remove-card"), 1000);
-  })
-);
+let hasFlippedCard = false;
+let lockBoard = false;
+let firstCard, secondCard;
 
-const imageCard = document.getElementById("image-card");
-console.log(imageCard);
+function flipCard() {
+  if (lockBoard) return;
+  if (this === firstCard) return;
 
-// generate a number between 1-8
+  this.classList.add("flip");
+
+  if (!hasFlippedCard) {
+    // first click
+    hasFlippedCard = true;
+    firstCard = this;
+
+    return;
+  } else {
+    //second click
+    hasFlippedCard = false;
+    secondCard = this;
+
+    checkForMatch();
+  }
+}
+
+function checkForMatch() {
+  let isMatch = firstCard.dataset.framework === secondCard.dataset.framework;
+
+  // if cards match = call disable cards (flip cards), if no match = call unflipCards (unflip cards)
+  isMatch ? disableCards() : unflipCards();
+}
+
+function disableCards() {
+  // cards match
+  firstCard.removeEventListener("click", flipCard);
+  secondCard.removeEventListener("click", flipCard);
+}
+
+function unflipCards() {
+  lockBoard = true;
+  // cards do not match
+  setTimeout(() => {
+    firstCard.classList.remove("flip");
+    secondCard.classList.remove("flip");
+
+    lockBoard = false;
+  }, 1500);
+}
+
+function resetBoard() {
+  [hasFlippedCard, lockBoard] = [false, false];
+  [firstCard, secondCard] = [false, false];
+
+  resetBoard();
+}
+
+(function shuffle() {
+  cards.forEach((card) => {
+    let randomPos = Math.floor(Math.random() * 7);
+    card.style.order = randomPos;
+  });
+})();
+
+cards.forEach((card) => card.addEventListener("click", flipCard));
+
+function refreshPage() {
+  console.log("page refreshed");
+  window.location.reload();
+}
